@@ -1,0 +1,232 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>KSC Report</title>
+	<style>
+@charset "UTF-8";
+@import url("https://fonts.googleapis.com/css?family=Pacifico|Source+Sans+Pro:400,700");
+@page {
+  margin: 0.5cm;
+  @bottom-right {
+    font-family: Pacifico;
+      color: #000;
+      font-size: 6pt;
+    content: '♥ !'; }
+  @bottom-right {
+    color: #a9a;
+    content: '';
+    font-family: Pacifico;
+    font-size: 9pt; } }
+h4, h5 { bookmark-level: none }
+h5 {
+    font-size: 14pt;
+    margin: 0;
+}
+h2 {
+    font-size: 0pt;
+    margin 0;
+}
+
+html {
+  color: #14213d;
+  font-family: Source Sans Pro;
+  font-size: 11pt;
+  line-height: 1.6; }
+  html body {
+    margin: 0;
+    align-content: center;}
+  html h1 {
+    color: #1ee494;
+    font-family: Pacifico;
+    font-size: 40pt;
+    margin: 0; }
+  html aside {
+    display: flex;
+    margin: 2em 0 4em; }
+    html aside address {
+      font-style: normal;
+      white-space: pre-line; }
+      html aside address#from {
+        color: #a9a;
+        flex: 1; }
+      html aside address#to {
+        text-align: right; }
+  html dl {
+    text-align: right;
+    position: absolute;
+    right: 0;
+    top: 0; }
+    html dl dt, html dl dd {
+      display: inline;
+      margin: 0; }
+    html dl dt {
+      color: #a9a; }
+      html dl dt::before {
+        content: '';
+        display: block; }
+      html dl dt::after {
+        content: ':'; }
+  html table {
+    border-collapse: collapse;
+    width: 100%; }
+    html table th {
+
+      color: #E3031B;
+      background: #FFEC01;
+      font-weight: 400;
+      border: 1px solid #ddd;
+      padding: 8px;
+      font-size: 9pt;
+        font-weight: bold;
+      text-transform: uppercase; }
+    html table th:first-of-type, html table td:first-of-type {
+        text-align: left; }
+    html table td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      font-size: 9pt;
+    }
+
+      html table tr:nth-child(2n+1){background-color: #f2f2f2;}
+    html table th, html table td {
+      text-align: center; }
+
+    html table#total {
+      background: #E3031B;;
+      border-color: #f6f6f6;
+      border-style: solid;
+      border-width: 2cm 3cm;
+      bottom: 0;
+      font-size: 20pt;
+      margin: 0 -3cm;
+      position: absolute;
+      width: 18cm; }
+
+    .center-img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+    </style>
+
+</head>
+
+<body>
+
+
+<div class="page">
+<h2>Auftragseingang</h2>
+<img alt="ksc" src="http://93.90.203.59/ksc-management-logo.svg" style="width:200px; height:80px;">
+<p></p>
+<table style="background: #f2f2f2; font-size: 16pt;">
+<tr>
+    <td><h5>REPORT 10/2020</h5></td>
+    <td><h5>{{ headline | upper }}</h5></td>
+</tr>
+</table>
+    <h4>AUFTRAGSEINGANG:</h4>
+
+    <table class="">
+    <tr>
+    <th></th>
+    {% for month in months %}
+          <th>
+              <b>{{ month }}</b>
+          </th>
+    {% endfor %}
+        <th><b>TOTAL</b></th>
+        <th><b>Ø MON</b></th>
+  </tr>
+      <tr style=" ">
+    <td style="">KOMMISSIONEN</td>
+    {% for commission in counts.COMMISSION %}
+            <td style="" >
+            {{ commission }}
+            </td>
+    {% endfor %}
+          <td style=""><b>{{ counts.COMMISSION | sum() }}</b></td>
+                <td style=" ">{{ (counts.COMMISSION | sum() / counts.COMMISSION | length) | round(0)}}</td>
+  </tr>
+    <tr style="">
+    <td style=" ">REKLAMATIONEN</td>
+        {% for claim in counts.CLAIM %}
+            <td style="" >
+            {{ claim }}
+            </td>
+        {% endfor %}
+          <td style=""><b>{{ counts.CLAIM | sum() }}</b></td>
+                <td style=" ">{{ (counts.CLAIM | sum() / counts.CLAIM | length) | round }}</td>
+  </tr>
+
+
+</table>
+
+    <img style='width:580px;height:288px;' class="center-img"  id='base64image'
+       src='data:image/jpeg;base64,  {{ plot }} ' />
+
+
+<h4>BEARBEITUNGS-WERTE:</h4>
+<table>
+  <thead>
+  <tr>
+      <th style="background-color: #E3031B; color:white;"></th>
+      <th>Unbearbeitet:</th>
+      <th>Laufende Bearbeitung:</th>
+      <th>vor Auslieferung:</th>
+      <th>Ausgeliefert:</th>
+  </tr>
+  </thead>
+  <tr>
+      <td style="width:1px;"></td>
+    <td> {{ (processing.NEW | sum) }} </td>
+    <td> {{ processing.OPEN_QUESTION + processing.ANSWERED_QUESTION + processing.IN_PROGRESS }} </td>
+    <td> {{ processing.ORDERED }} </td>
+	<td> {{ processing.CLOSED }} </td>
+  </tr>
+</table>
+
+<h4>REKLAMATIONEN:</h4>
+<table>
+    <thead>
+    <tr style="background-color: #E3031B; color:white;">
+        <th style="background-color: #E3031B; color:white;"></th>
+        <th>ANZAHL</th>
+        <th>REKLA-KOSTEN</th>
+        <th>GUTSCHRIFT (BA)</th>
+        <th>GESAMT-KOSTEN</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td style="width:1px;"></td>
+        <td> {{ bills.count }} </td>
+        <td> {{ bills.bill }}  EUR</td>
+        <td> {{ bills.discharge }}  EUR</td>
+        <td><b> {{ bills.total }}  EUR</b></td>
+    </tr>
+    </tbody>
+</table>
+
+<h4>BENCHMARKS:</h4>
+<table>
+    <thead>
+    <tr >
+        <th style="background-color: #E3031B; color:white;"></th>
+        <th>Ø KOSTEN JE REKLA</th>
+        <th>Ø KOSTEN JE KOMMISSION</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td style="width:1px;"></td>
+        <td> {{ benchmarks.claim }} EUR</td>
+        <td> {{ benchmarks.commission }} EUR</td>
+    </tr>
+    </tbody>
+</table>
+
+</div>
+
+</body>
+</html>

@@ -66,6 +66,17 @@ export default new Router({
               ],
             },
             {
+              path: 'reporting',
+              component: RouterComponent,
+              redirect: 'reporting/create',
+              children: [
+                {
+                  path: 'create',
+                  component: () => import('./views/main/user/UserCreateReporting.vue'),
+                },
+              ],
+            },
+            {
               path: 'profile',
               component: RouterComponent,
               redirect: 'profile/view',

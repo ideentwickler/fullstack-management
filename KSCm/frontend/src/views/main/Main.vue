@@ -20,7 +20,7 @@
               <v-list-tile-title>Stores</v-list-tile-title>
             </v-list-tile-content>
           </v-list-tile>
-          <v-list-tile to="/main/dashboard" class="tile">
+          <v-list-tile  class="tile">
             <v-list-tile-action>
               <v-icon>storage</v-icon>
             </v-list-tile-action>
@@ -28,7 +28,7 @@
               <v-list-tile-title>Tickets</v-list-tile-title>
             </v-list-tile-content>
           </v-list-tile>
-          <v-list-tile to="/main/dashboard" class="tile">
+          <v-list-tile  class="tile">
             <v-list-tile-action>
               <v-icon>request_quote</v-icon>
             </v-list-tile-action>
@@ -36,7 +36,7 @@
               <v-list-tile-title>Claims</v-list-tile-title>
             </v-list-tile-content>
           </v-list-tile>
-          <v-list-tile to="/main/dashboard" class="tile">
+          <v-list-tile  class="tile">
             <v-list-tile-action>
               <v-icon>folder_shared</v-icon>
             </v-list-tile-action>
@@ -44,7 +44,7 @@
               <v-list-tile-title>Managers</v-list-tile-title>
             </v-list-tile-content>
           </v-list-tile>
-          <v-list-tile class="tile" @click="openReporting">
+          <v-list-tile to="/main/reporting" class="tile" >
             <v-list-tile-action>
               <v-icon>analytics</v-icon>
             </v-list-tile-action>
@@ -56,7 +56,7 @@
         <v-divider></v-divider>
         <v-list>
           <v-subheader>Settings</v-subheader>
-          <v-list-tile to="/main/dashboard" class="tile">
+          <v-list-tile  class="tile">
             <v-list-tile-action>
               <v-icon>settings_suggest</v-icon>
             </v-list-tile-action>
@@ -167,12 +167,7 @@ export default class Main extends Vue {
   }
 
   public getToken() {
-    console.log(readToken(this.$store));
     return readToken(this.$store);
-  }
-
-  public openReporting() {
-    window.open(`http://localhost/views/reporting?token=${this.getToken()}`, '', 'width=1200px, height=842px');
   }
 
   get showDrawer() {

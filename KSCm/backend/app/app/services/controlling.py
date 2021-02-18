@@ -143,7 +143,7 @@ class ControllingData(ControllingCalendar):
         local_sum = format_number(rounded_sum, locale='de_DE')
         return local_sum
 
-    def get_clean_claim_bill(self) -> None:
+    def get_clean_claim_bill(self) -> float:
         claim_bill_sum = services.get_claim_bill(
             db,
             start=self.start,
@@ -160,7 +160,8 @@ class ControllingData(ControllingCalendar):
             owner_id=self.owner_id,
         )
         clean_bill = claim_discharge_sum + claim_bill_sum
-        return clean_bill
+        print("clean bill", clean_bill)
+        return clean_bill if clean_bill else 0
 
     def get_claim_bill_formatted(self) -> float:
         claim_bill_sum = services.get_claim_bill(
@@ -206,7 +207,11 @@ class ControllingData(ControllingCalendar):
         )
         claim_average_format = self.get_local_format(claim_average, 2)
         ticket_count = sum(self.context.counts[models.TicketKind.COMMISSION.name])
-        claim_average_per_commission = self.get_clean_claim_bill() / ticket_count
+        print("ticket count", ticket_count)
+        try:
+            claim_average_per_commission = self.get_clean_claim_bill() / ticket_count
+        except ZeroDivisionError:
+            claim_average_per_commission = 0.00
         claim_average_per_commission_format = self.get_local_format(claim_average_per_commission, 2)
         self.context.benchmarks.update({
             'claim': claim_average_format,

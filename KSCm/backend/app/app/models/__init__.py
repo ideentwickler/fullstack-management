@@ -3,3 +3,4 @@ from .user import User
 from .store import Store, StoreSupport
 from .ticket import Ticket, TicketStatus, TicketKind
 from .claim import Claim, ClaimKind
+from .media import Media, MediaType

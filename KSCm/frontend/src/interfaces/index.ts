@@ -43,3 +43,12 @@ export interface IStoreUpdate {
     internal_id?: number;
     name?: string;
 }
+
+export interface IReportingFileCreate {
+    year: string | number;
+    month_start: string | number;
+    month_end: string | number;
+    stores: number[] | string[];
+    title: string;
+    email_reciepent?: string;
+}

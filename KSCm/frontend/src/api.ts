@@ -1,6 +1,14 @@
 import axios from 'axios';
 import { apiUrl } from '@/env';
-import {IUserProfile, IUserProfileUpdate, IUserProfileCreate, IStore, IStoreUpdate, IStoreCreate} from './interfaces';
+import {
+  IUserProfile,
+  IUserProfileUpdate,
+  IUserProfileCreate,
+  IStore,
+  IStoreUpdate,
+  IStoreCreate,
+  IReportingFileCreate,
+} from './interfaces';
 
 function authHeaders(token: string) {
   return {
@@ -50,5 +58,8 @@ export const api = {
   },
   async createStore(token: string, data: IStoreCreate) {
     return axios.post(`${apiUrl}/api/v1/stores/`, data, authHeaders(token));
+  },
+  async createReportingFile(token: string, data: IReportingFileCreate) {
+    return axios.post(`${apiUrl}/api/v1/controlling/create`, data, authHeaders(token));
   },
 };

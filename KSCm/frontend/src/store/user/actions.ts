@@ -5,12 +5,22 @@ import { UserState } from './state';
 import { getStoreAccessors } from 'typesafe-vuex';
 import { commitSetStores, commitSetStore } from './mutations';
 import { dispatchCheckApiError } from '../main/actions';
-import {IStoreCreate, IStoreUpdate} from '@/interfaces';
+import {IReportingFileCreate, IStoreCreate, IStoreUpdate} from '@/interfaces';
 import {commitAddNotification, commitRemoveNotification} from '@/store/main/mutations';
 
 type MainContext = ActionContext<UserState, State>;
 
 export const actions = {
+    async actionGetFile(context: MainContext, payload: IReportingFileCreate) {
+       try {
+            const response = await api.createReportingFile(context.rootState.main.token, payload);
+            if (response) {
+                return response.data;
+            }
+        } catch (error) {
+            await dispatchCheckApiError(context, error);
+        }
+    },
     async actionGetStores(context: MainContext) {
         try {
             const response = await api.getStores(context.rootState.main.token);
@@ -58,3 +68,4 @@ const { dispatch } = getStoreAccessors<UserState, State>('');
 export const dispatchGetStores = dispatch(actions.actionGetStores);
 export const dispatchUpdateStore = dispatch(actions.actionUpdateStore);
 export const dispatchCreateStore = dispatch(actions.actionCreateStore);
+export const dispatchGetFile = dispatch(actions.actionGetFile);

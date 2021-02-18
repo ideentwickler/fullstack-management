@@ -3,6 +3,10 @@ from weasyprint import HTML
 from weasyprint.fonts import FontConfiguration
 from jinja2 import Environment, PackageLoader, select_autoescape
 
+from app.core.config import settings
+
+from app.core import config
+
 #  https://jinja.palletsprojects.com/en/2.11.x/api/#basics
 jinja_env = Environment(
     loader=PackageLoader('app', 'views/templates/'),
@@ -38,6 +42,12 @@ class PDFGenerator:
 
     def get_header(self):
         return self.header
+
+    def save_as(self) -> None:
+        self.create_documents().write_pdf(
+            f'{str(settings.SERVER_BASE_DIR)}/'
+            f'{str(settings.SERVER_MEDIA_DIR)}/test.pdf'
+        )
 
     def get_response(self):
         self.create_documents()

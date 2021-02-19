@@ -2,5 +2,5 @@
 .mypy_cache
 .coverage
 htmlcov
-celerybeat-schedule
-celerybeat.pid
+.celerybeat-schedule
+.celerybeat.pid

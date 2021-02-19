@@ -43,11 +43,16 @@ class PDFGenerator:
     def get_header(self):
         return self.header
 
-    def save_as(self) -> None:
+    def save_as(self, filename: t.Optional[str] = None) -> str:
+        if not filename:
+            from app.tests.utils.utils import random_lower_string
+            filename = random_lower_string()
+
         self.create_documents().write_pdf(
             f'{str(settings.SERVER_BASE_DIR)}/'
-            f'{str(settings.SERVER_MEDIA_DIR)}/test.pdf'
+            f'{str(settings.SERVER_MEDIA_DIR)}/{filename}.pdf'
         )
+        return filename
 
     def get_response(self):
         self.create_documents()

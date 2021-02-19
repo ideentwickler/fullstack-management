@@ -26,6 +26,6 @@ class Media(Base):
     filename = Column(String, unique=True, index=True)
 
     owner_id = Column(Integer, ForeignKey("user.id"))
-    owner = relationship("User", back_populates="claims")
+    owner = relationship("User", back_populates="media")
 
 

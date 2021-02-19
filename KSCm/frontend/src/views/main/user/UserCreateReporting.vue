@@ -211,7 +211,7 @@ import {
 import {
   readUserSupportedStores,
 } from '@/store/user/getters';
-import {readToken} from "@/store/main/getters";
+import {readToken} from '@/store/main/getters';
 
 
 @Component

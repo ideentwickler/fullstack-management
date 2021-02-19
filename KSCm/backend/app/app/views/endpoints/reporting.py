@@ -19,7 +19,7 @@ def read_file(token: t.Optional[str] = None):
     _get_user_by_token = deps.get_current_user_by_query_token(
         token=token)  # authentication user dependency
 
-    file = open(str(settings.SERVER_BASE_DIR) + '/test.pdf', "rb")
+    file = open(str(settings.SERVER_BASE_DIR) + '/' + str(settings.SERVER_MEDIA_DIR) + '/test.pdf', "rb")
     file = file.read()
     print(file)
     return Response(content=file)

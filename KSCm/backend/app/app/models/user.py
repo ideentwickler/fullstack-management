@@ -9,6 +9,7 @@ if TYPE_CHECKING:
     from .ticket import Ticket  # noqa: F401
     from .item import Item  # noqa: F401
     from .claim import Claim  # noqa: F401
+    from .media import Media  # noqa: F401
 
 
 class User(Base):
@@ -23,3 +24,4 @@ class User(Base):
     tickets = relationship("Ticket", back_populates="owner")
     items = relationship("Item", back_populates="owner")
     claims = relationship("Claim", back_populates="owner")
+    media = relationship("Media", back_populates="owner")

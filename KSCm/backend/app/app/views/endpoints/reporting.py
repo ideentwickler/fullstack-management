@@ -12,14 +12,20 @@ db = SessionLocal()
 
 
 @router.get("/reporting")
-def read_file(token: t.Optional[str] = None):
-    if not token:
+def read_file(token: t.Optional[str] = None, file_id: t.Any = None):
+    if not token or not file_id:
         return PlainTextResponse("Forbidden 404")
 
     _get_user_by_token = deps.get_current_user_by_query_token(
         token=token)  # authentication user dependency
 
-    file = open(str(settings.SERVER_BASE_DIR) + '/' + str(settings.SERVER_MEDIA_DIR) + '/test.pdf', "rb")
+    media_file = crud.media.get(db, id=file_id)
+    if not media_file:
+        return PlainTextResponse("File not found")
+
+    file = open(str(settings.SERVER_BASE_DIR) + '/'
+                + str(settings.SERVER_MEDIA_DIR)
+                + f'/{media_file.filename}', "rb")
     file = file.read()
     print(file)
     return Response(content=file)

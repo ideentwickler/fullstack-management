@@ -51,4 +51,5 @@ export interface IReportingFileCreate {
     stores: number[] | string[];
     title: string;
     email_reciepent?: string;
+    filename?: string;
 }

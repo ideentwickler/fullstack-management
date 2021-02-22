@@ -114,20 +114,35 @@
                             v-model="reportingTitle"
                             label="Titel"
                             prepend-icon="title"
+                            placeholder="REPORT MM/YYYY"
                         ></v-text-field>
                       </v-flex>
                       <v-flex xs2></v-flex>
                       <v-flex xs4>
                         <v-checkbox
                             v-model="sendReportingAsMail"
-                            prepend-icon="settings_suggest"
-                            label="`Send Report via E-Mail"
+                            prepend-icon="attach_email"
+                            label="As eMail Attachment"
                         ></v-checkbox>
                         <v-text-field
                             v-model="eMailReciepent"
-                            prepend-icon="email"
+                            prepend-icon=""
                             v-if="sendReportingAsMail"
-                            label=""
+                            label="eMail"
+                            placeholder="em@amil.org"
+                          ></v-text-field>
+
+                        <v-checkbox
+                            v-model="saveReportingInDB"
+                            prepend-icon="save"
+                            label="Save Report in Database"
+                        ></v-checkbox>
+                        <v-text-field
+                            v-model="reportingFileName"
+                            prepend-icon=""
+                            v-if="saveReportingInDB"
+                            label="Filename"
+                            placeholder="REPORT-MM-YYYY"
                           ></v-text-field>
                       </v-flex>
                     </v-layout>
@@ -153,8 +168,8 @@
 
                     <v-card>
                       <v-card-title class="headline grey lighten-2">
-                        <h2 v-if="loading">Processing Data...</h2>
-                        <h2 v-else>Successfully created...</h2>
+                        <h3 v-if="loading">Processing Data...</h3>
+                        <h3 v-else>Successfully created...</h3>
                       </v-card-title>
 
                       <v-card-text>
@@ -228,6 +243,8 @@ export default class EditUser extends Vue {
   public reportingTitle: string = '';
   public sendReportingAsMail: boolean = false;
   public eMailReciepent: string = '';
+  public saveReportingInDB: boolean = false;
+  public reportingFileName: string = '';
 
   public async mounted() {
     await dispatchGetStores(this.$store);
@@ -275,11 +292,19 @@ export default class EditUser extends Vue {
         if (this.sendReportingAsMail && this.eMailReciepent !== '') {
           createReportingFile.email_reciepent = this.eMailReciepent;
         }
+        if (this.saveReportingInDB && this.reportingFileName !== '') {
+          createReportingFile.filename = this.reportingFileName;
+        }
+
+        console.log(createReportingFile);
 
         const res = await dispatchGetFile(this.$store, createReportingFile);
         if (res) {
+          const file_id = res.file;
+          console.log(file_id);
+          console.log(res);
           this.loading = false;
-          window.open(`http://localhost/views/reporting?token=${this.userToken}`, '', 'width=1200px, height=842px');
+          window.open(`http://localhost/views/reporting?token=${this.userToken}&file_id=${file_id}`, '', 'width=1200px, height=842px');
         }
       }
     }

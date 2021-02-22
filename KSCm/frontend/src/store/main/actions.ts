@@ -105,6 +105,7 @@ export const actions = {
         }
     },
     async actionCheckApiError(context: MainContext, payload: AxiosError) {
+        commitAddNotification(context, { content: 'Sorry, something went wrong', color: 'red' });
         if (payload.response!.status === 401) {
             await dispatchLogOut(context);
         }

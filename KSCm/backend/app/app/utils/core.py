@@ -1,13 +1,35 @@
+import os
 import logging
+import emails
+
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any, Dict, Optional
 
-import emails
 from emails.template import JinjaTemplate
 from jose import jwt
 
+from app.tests.utils.user import random_lower_string
 from app.core.config import settings
+
+
+def file_exist_in_media_dir(filename: str) -> bool:
+    exist_in_media_dir = os.path.exists(
+        f'{str(settings.SERVER_BASE_DIR)}/'
+        + f'{str(settings.SERVER_MEDIA_DIR)}/'
+        + f'{filename}'
+    )
+    return exist_in_media_dir
+
+
+def generate_fixed_filename(filename: str) -> str:
+    unfixed = False
+    while not unfixed:
+        random_string = random_lower_string()[0:5]
+        filename = f"{random_string}-{filename}"
+        if not file_exist_in_media_dir(filename):
+            unfixed = True
+    return filename
 
 
 def send_email(

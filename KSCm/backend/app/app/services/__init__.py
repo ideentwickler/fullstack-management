@@ -5,3 +5,4 @@ from .claim.helper import get_claim_bill, get_clean_discharge
 from .ticket.helper import get_tickets_count
 from .pdf.response import PDFGenerator
 from .ploty.createplot import CreatePlot
+from .service_media import MediaService

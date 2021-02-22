@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Any
 from uuid import UUID
 from datetime import datetime
 
@@ -12,11 +12,13 @@ class MediaBase(BaseModel):
     type: Optional[MediaType] = None
     filename: Optional[str] = None
     created_at: Optional[datetime] = None
+    owner_id: Optional[int] = None
 
 
 # Properties to receive on item creation
 class MediaCreate(MediaBase):
-    title: str
+    type: Any
+    filename: str
 
 
 # Properties to receive on item update
@@ -27,7 +29,7 @@ class MediaUpdate(MediaBase):
 # Properties shared by models stored in DB
 class MediaInDBBase(MediaBase):
     id: UUID
-    title: str
+    filename: str
     owner_id: int
 
     class Config:

@@ -119,6 +119,11 @@ class ControllingData(ControllingCalendar):
                 )
                 count_per_month.append(ticket_count)
             self.context.counts[kind.name] = count_per_month
+        self.context.counts['TOTAL'] = [
+            x + y for (x, y) in zip(
+                self.context.counts[models.TicketKind.COMMISSION.name],
+                self.context.counts[models.TicketKind.CLAIM.name])
+        ]
         return
 
     def get_ticket_count_per_status_process(self) -> None:
@@ -179,7 +184,7 @@ class ControllingData(ControllingCalendar):
             store_internal_id=self.store_internal_id,
             owner_id=self.owner_id,
         )
-        claim_bill_discharge_dif = claim_bill_sum - claim_discharge_sum
+        claim_bill_discharge_dif = self.get_clean_claim_bill()
         claim_count = services.get_claim_bill(
             db,
             start=self.start,

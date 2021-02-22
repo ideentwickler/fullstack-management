@@ -5,8 +5,6 @@ from jinja2 import Environment, PackageLoader, select_autoescape
 
 from app.core.config import settings
 
-from app.core import config
-
 #  https://jinja.palletsprojects.com/en/2.11.x/api/#basics
 jinja_env = Environment(
     loader=PackageLoader('app', 'views/templates/'),

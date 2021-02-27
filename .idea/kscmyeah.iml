@@ -4,6 +4,7 @@
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/KSCm/backend/app/app" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/KSCm/backend/app/media" />
+      <excludeFolder url="file://$MODULE_DIR$/KSCm/backend/app/notebooks" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

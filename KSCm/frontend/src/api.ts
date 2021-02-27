@@ -18,6 +18,7 @@ function authHeaders(token: string) {
   };
 }
 
+
 export const api = {
   async logInGetToken(username: string, password: string) {
     const params = new URLSearchParams();
@@ -62,4 +63,21 @@ export const api = {
   async createReportingFile(token: string, data: IReportingFileCreate) {
     return axios.post(`${apiUrl}/api/v1/controlling/create`, data, authHeaders(token));
   },
+  async getTickets(
+      token: string, pageNumber: number = 0, itemsPerPage: number = 15, orderBy: string, desc: boolean = true,
+  ) {
+    return axios.get(`${apiUrl}/api/v1/tickets/`, {
+      ...authHeaders(token),
+      params: {page: pageNumber, size: itemsPerPage, order_by: orderBy, desc},
+    });
+  },
+  async postFileObject(token: string, data: any) {
+    return axios.post(`${apiUrl}/api/v1/media/`, data);
+  },
+  async createTask(token: string, mediaId: string) {
+    return axios.get(`${apiUrl}/api/v1/media/${mediaId}`, {params: {task: 'True'}});
+  },
+  async getTaskStatus(token: string, taskId: string) {
+   return axios.get(`${apiUrl}/api/v1/utils/task-status/`, {params: {task_id: taskId}});
+}
 };

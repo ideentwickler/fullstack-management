@@ -44,7 +44,7 @@ if settings.BACKEND_CORS_ORIGINS:
         allow_headers=["*"],
     )
 
-# Api Router
+# Api Router: /api/...
 app.include_router(api_router, prefix=settings.API_V1_STR)
-# View Router
+# View Router: /views/...
 app.include_router(view_router, prefix=settings.APP_VIEW_STR)

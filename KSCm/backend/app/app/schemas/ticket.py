@@ -14,6 +14,8 @@ class TicketBase(BaseModel):
     kind: Optional[TicketKind] = None
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
+    store_internal_id: Optional[int] = None
+    owner_id: Optional[int] = None
 
 
 # Properties to receive on item creation
@@ -37,8 +39,6 @@ class TicketUpdate(TicketBase):
 # Properties shared by models stored in DB
 class TicketInDBBase(TicketBase):
     id: int
-    owner_id: int
-    store_internal_id: int
 
     class Config:
         orm_mode = True

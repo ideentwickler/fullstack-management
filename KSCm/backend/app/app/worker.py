@@ -1,3 +1,4 @@
+import time
 from celery import current_task
 from datetime import datetime
 from app.db.session import SessionLocal
@@ -6,13 +7,22 @@ from app.services.ticket import progress
 from app.services.controlling import ControllingCalendar
 from app import crud, models, schemas
 
-#  client_sentry = Client(settings.SENTRY_DSN)
 db = SessionLocal()
 
 
 @celery_app.task(acks_late=True)
 def test_celery(word: str) -> str:
     return f"test task return {word}"
+
+
+@celery_app.task(acks_late=True)
+def test_test():
+    s = 0
+    while s != 30:
+        time.sleep(1)
+        print(s)
+        s += 1
+    return 'finished'
 
 
 @celery_app.task
@@ -77,6 +87,9 @@ def progress_ticket_data():
     for key, val in tickets.items():
         if val['kv_nr'] != 0 and val['ticket_id'] != 0:
             i += 1
+            if i % 100 == 1:
+                print("sleeping a second...")
+                time.sleep(1)
             current_task.update_state(state='PROGRESS', meta={'process': f'{i}/{tickets_len}'})
             check_ticket = progress.ticket_exist(ticket_id=val['ticket_id'])
             if not check_ticket:
@@ -104,3 +117,5 @@ def progress_ticket_data():
                 ticket = crud.ticket.update(db, db_obj=db_obj, obj_in=ticket_in)
                 if ticket:
                     print(f"...updated ticket #{ticket.ticket_id}")
+
+    return 'finished'

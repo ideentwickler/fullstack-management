@@ -9,7 +9,7 @@ from app.utils.service_result import handle_result
 from app import crud, models, schemas, services
 from app.api import deps
 
-router = APIRouter(dependencies=[Depends(deps.get_db)])
+router = APIRouter()
 
 
 class CreateReporting(BaseModel):
@@ -28,8 +28,10 @@ def media_test(
         db: Session = Depends(deps.get_db),
         current_user: models.User = Depends(deps.get_current_user),
 ):
-    media_in.owner_id = current_user.id
-    result = services.MediaService(db).create_media(media_in=media_in, auto_save=True)
+    #  media_in.owner_id = current_user.id
+    result = services.MediaService(db).create_media(media_in=media_in,
+                                                    owner_id=current_user.id,
+                                                    auto_save=False)
     return handle_result(result)
 
 

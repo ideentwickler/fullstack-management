@@ -295,16 +295,11 @@ export default class EditUser extends Vue {
         if (this.saveReportingInDB && this.reportingFileName !== '') {
           createReportingFile.filename = this.reportingFileName;
         }
-
-        console.log(createReportingFile);
-
         const res = await dispatchGetFile(this.$store, createReportingFile);
         if (res) {
-          const file_id = res.file;
-          console.log(file_id);
-          console.log(res);
+          const fileId = res.file;
           this.loading = false;
-          window.open(`http://localhost/views/reporting?token=${this.userToken}&file_id=${file_id}`, '', 'width=1200px, height=842px');
+          window.open(`http://localhost/views/reporting?token=${this.userToken}&file_id=${fileId}`, '', 'width=1200px, height=842px');
         }
       }
     }

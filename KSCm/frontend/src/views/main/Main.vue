@@ -20,7 +20,7 @@
               <v-list-tile-title>Stores</v-list-tile-title>
             </v-list-tile-content>
           </v-list-tile>
-          <v-list-tile  class="tile">
+          <v-list-tile to="/main/tickets" class="tile">
             <v-list-tile-action>
               <v-icon>storage</v-icon>
             </v-list-tile-action>

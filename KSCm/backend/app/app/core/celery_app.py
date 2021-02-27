@@ -8,6 +8,7 @@ celery_app = Celery(
 
 celery_app.conf.task_routes = {
     "app.worker.test_celery": "main-queue",
+    "app.worker.test_test": "main-queue",
     "app.worker.progress_ticket_data": "main-queue",
 }
 
@@ -23,8 +24,10 @@ celery_app.conf.update(task_track_started=True)
 
 def celery_on_message(body):
     print(body)
+    return
 
 
 def background_on_message(task):
     print(task.get(on_message=celery_on_message, propagate=False))
+    return
 

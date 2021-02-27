@@ -1,6 +1,7 @@
 import { UserState } from './state';
 import { getStoreAccessors } from 'typesafe-vuex';
 import { State } from '../state';
+import { ITicket } from '@/interfaces/ticket';
 
 export const getters = {
     userStores: (state: UserState) => state.stores,
@@ -16,6 +17,13 @@ export const getters = {
             return { ...filteredStores };
         }
     },
+    userTickets: (state: UserState) => state.tickets,
+    userOneTicket: (state: UserState) => (ticketId: number) => {
+        const filteredTickets = state.tickets.filter((ticket: ITicket) => ticket.ticket_id === ticketId);
+        if (filteredTickets.length > 0) {
+            return { ...filteredTickets[0] };
+        }
+    },
 };
 
 const { read } = getStoreAccessors<UserState, State>('');
@@ -23,3 +31,5 @@ const { read } = getStoreAccessors<UserState, State>('');
 export const readUserOneStore = read(getters.userOneStore);
 export const readUserStores = read(getters.userStores);
 export const readUserSupportedStores = read(getters.userSupportedStores);
+export const readUserTickets = read(getters.userTickets);
+export const readUserOneTicket = read(getters.userOneTicket);

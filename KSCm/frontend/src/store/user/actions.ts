@@ -3,10 +3,10 @@ import { ActionContext } from 'vuex';
 import { State } from '../state';
 import { UserState } from './state';
 import { getStoreAccessors } from 'typesafe-vuex';
-import { commitSetStores, commitSetStore } from './mutations';
+import { commitSetStores, commitSetStore, commitSetTickets } from './mutations';
 import { dispatchCheckApiError } from '../main/actions';
-import {IReportingFileCreate, IStoreCreate, IStoreUpdate} from '@/interfaces';
-import {commitAddNotification, commitRemoveNotification} from '@/store/main/mutations';
+import { IReportingFileCreate, IStoreCreate, IStoreUpdate } from '@/interfaces';
+import { commitAddNotification, commitRemoveNotification } from '@/store/main/mutations';
 
 type MainContext = ActionContext<UserState, State>;
 

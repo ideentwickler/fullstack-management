@@ -13,6 +13,7 @@ class CRUDMedia(CRUDBase[Media, MediaCreate, MediaUpdate]):
         self, db: Session, *, obj_in: MediaCreate, owner_id: int
     ) -> Media:
         obj_in_data = jsonable_encoder(obj_in)
+        print(obj_in_data)
         db_obj = self.model(**obj_in_data, owner_id=owner_id)
         db.add(db_obj)
         db.commit()

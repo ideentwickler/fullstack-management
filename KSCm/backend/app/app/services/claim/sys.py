@@ -58,7 +58,7 @@ def iter_claim_rows(file: load_workbook) -> t.List[schemas.Claim]:
     i = 0
     for row in file.iter_rows(values_only=True, max_col=15):
         i += 1
-        if i / 100 == 1:
+        if i % 100 == 1:
             time.sleep(5)
         data = fetch_claim_data(row)
         echo = create_claim(data=data)

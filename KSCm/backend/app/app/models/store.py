@@ -27,10 +27,13 @@ class Store(Base):
     tickets = relationship("Ticket", backref="store", lazy="dynamic")
     claims = relationship("Claim", backref="claims", lazy="dynamic")
 
-    def __init__(self, internal_id, name, support):
-        self.internal_id = internal_id
-        self.name = name
-        self.support = support
+    # https://stackoverflow.com/questions/14361264/the-default-sorting-criteria-of-sqlalchemy
+    __mapper_args__ = {
+        "order_by": name
+    }
+
+    def __repr__(self):
+        return f"<{self.__tablename__.upper()} # {self.internal_id} - {self.name}>"
 
 
 

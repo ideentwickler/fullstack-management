@@ -45,3 +45,7 @@ class Ticket(Base):
     store_internal_id = Column(Integer, ForeignKey("store.internal_id"))
 
     claims = relationship("Claim", back_populates="ticket")
+
+    __mapper_args__ = {
+        "order_by": ticket_id.desc(),
+    }

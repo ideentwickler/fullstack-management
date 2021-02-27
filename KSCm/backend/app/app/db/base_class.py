@@ -15,3 +15,7 @@ class Base:
 
     created_at = Column(DateTime, default=func.now())
     updated_at = Column(DateTime, onupdate=func.now())
+
+    @declared_attr
+    def __str__(self):
+        return f"<{self.id}>"

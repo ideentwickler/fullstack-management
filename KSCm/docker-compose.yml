@@ -189,7 +189,7 @@ services:
       - "redis_data:/bitnami/redis/data"
 
   rabbitmq:
-    image: "bitnami/rabbitmq:3.7"
+    image: "bitnami/rabbitmq:latest"
     ports:
       - "4369:4369"
       - "5672:5672"

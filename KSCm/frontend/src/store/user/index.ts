@@ -5,6 +5,7 @@ import { UserState } from './state';
 
 const defaultState: UserState = {
   stores: [],
+  tickets: [],
 };
 
 export const userModule = {

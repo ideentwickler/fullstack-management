@@ -1,5 +1,7 @@
+import typing as t
 from fastapi import Request
 from starlette.responses import JSONResponse
+from pydantic import BaseModel
 
 
 class AppExceptionCase(Exception):
@@ -15,7 +17,7 @@ class AppExceptionCase(Exception):
         )
 
 
-async def app_exception_handler(request: Request, exc: AppExceptionCase):
+async def app_exception_handler(_request: Request, exc: AppExceptionCase):
     return JSONResponse(
         status_code=exc.status_code,
         content={

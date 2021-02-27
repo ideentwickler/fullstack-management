@@ -77,6 +77,17 @@ export default new Router({
               ],
             },
             {
+              path: 'tickets',
+              component: RouterComponent,
+              redirect: 'tickets/all',
+              children: [
+                {
+                  path: 'all',
+                  component: () => import('./views/main/user/UserTickets.vue'),
+                },
+              ],
+            },
+            {
               path: 'profile',
               component: RouterComponent,
               redirect: 'profile/view',

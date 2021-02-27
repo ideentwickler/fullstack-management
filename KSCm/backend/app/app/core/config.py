@@ -15,6 +15,7 @@ class Settings(BaseSettings):
     SERVER_HOST: AnyHttpUrl
     SERVER_BASE_DIR: str = str(pathlib.Path().parent.absolute())
     SERVER_MEDIA_DIR: str = 'media'
+    ALLOWED_FILE_EXTENSIONS: List[str] = ["pdf", "xlsx", "xlx", "csv", "tsv", "jpg"]
     # BACKEND_CORS_ORIGINS is a JSON-formatted list of origins
     # e.g: '["http://localhost", "http://localhost:4200", "http://localhost:3000", \
     # "http://localhost:8080", "http://local.dockertoolbox.tiangolo.com"]'

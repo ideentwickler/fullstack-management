@@ -7,4 +7,9 @@ Vue.use(Vuetify, {
     primary: '#c00d0d',
     second_ary: '#ffde14',
   },
+  icons: {
+    values: {
+      sort: 'mdi-arrow-down',
+    },
+  },
 });

@@ -1,58 +1,43 @@
-from typing import Any, List
+from typing import Any, List, Optional, Union, TypeVar
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from pydantic import BaseModel
 
-from app import crud, models, schemas
+from fastapi_pagination.ext.sqlalchemy import paginate
+from fastapi_pagination import Page, pagination_params
+
+from app.utils.service_result import handle_result
+from app.services.service_ticket import TicketService
+from app import crud, schemas
 from app.api import deps
 
 router = APIRouter()
 
 
-@router.get("/", response_model=List[schemas.Ticket])
-def read_tickets(
-    db: Session = Depends(deps.get_db),
-    skip: int = 0,
-    limit: int = 999,
-    _current_user: models.User = Depends(deps.get_current_active_user),
-) -> Any:
-    """
-    Retrieve stores.
-    """
-    tickets = crud.store.get_multi(db, skip=skip, limit=limit)
-    return tickets
+class ReadTicketsGetParams(BaseModel):
+    desc: Optional[str] = None
+    order_by: Optional[str] = None
 
 
-@router.put("/{ticket_id}", response_model=schemas.Ticket)
-def update_ticket(
-    *,
-    db: Session = Depends(deps.get_db),
-    ticket_id: int,
-    ticket_in: schemas.TicketUpdate,
-    _current_user: models.User = Depends(deps.get_current_active_user),
-) -> Any:
+@router.get("/", response_model=Page[schemas.Ticket],
+            dependencies=[Depends(pagination_params)])
+def read_tickets(db: Session = Depends(deps.get_db),
+                 request: ReadTicketsGetParams = Depends()) -> Any:
     """
-    Update an ticket.
+    Retrieve tickets.
     """
-    ticket = crud.ticket.get_by_kwargs(db, ticket_id=ticket_id).first()
-    if not ticket:
-        raise HTTPException(status_code=404, detail="Ticket not found")
-    store = crud.store.update(db, db_obj=ticket, obj_in=ticket_in)
-    return store
+    service = TicketService(db).get_paginate_query(request=request)
+    result = handle_result(service)
+    return paginate(result)
 
 
-@router.get("/{ticket_id}", response_model=schemas.Store)
-def read_ticket(
-    *,
-    db: Session = Depends(deps.get_db),
-    ticket_id: int,
-    _current_user: models.User = Depends(deps.get_current_active_user),
-) -> Any:
+@router.get("/{ticket_id}", response_model=schemas.Ticket)
+def read_ticket(*, ticket_id: int, db: Session = Depends(deps.get_db)) -> Any:
     """
-    Get ticket by ID.
+    Get ticket by ticket_id.
     """
-    ticket = crud.ticket.get_by_kwargs(db, ticket_id=ticket_id).first()
-    if not ticket:
-        raise HTTPException(status_code=404, detail="Ticket not found")
-    return ticket
+    service = TicketService(db).get(ticket_id=ticket_id)
+    result = handle_result(service)
+    return result
 

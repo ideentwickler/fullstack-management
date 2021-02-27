@@ -11,14 +11,23 @@ from app.models.media import MediaType
 class MediaBase(BaseModel):
     type: Optional[MediaType] = None
     filename: Optional[str] = None
-    created_at: Optional[datetime] = None
     owner_id: Optional[int] = None
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
 
 
 # Properties to receive on item creation
 class MediaCreate(MediaBase):
-    type: Any
+    type: Optional[Any] = MediaType.OTHER.name
     filename: str
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "filename": "filename with allowed extension",
+                "type": "every kind of MediaType"
+            }
+        }
 
 
 # Properties to receive on item update
@@ -29,8 +38,6 @@ class MediaUpdate(MediaBase):
 # Properties shared by models stored in DB
 class MediaInDBBase(MediaBase):
     id: UUID
-    filename: str
-    owner_id: int
 
     class Config:
         orm_mode = True

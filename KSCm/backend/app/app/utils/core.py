@@ -32,6 +32,16 @@ def generate_fixed_filename(filename: str) -> str:
     return filename
 
 
+def check_valid_filename(filename: str) -> bool:
+    try:
+        file, extension = filename.split(".")
+        extension = extension.lower()
+        return True if extension in [ext.lower() for ext in
+                                     settings.ALLOWED_FILE_EXTENSIONS] else False
+    except ValueError:
+        return False
+
+
 def send_email(
     email_to: str,
     subject_template: str = "",

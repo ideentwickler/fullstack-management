@@ -20,6 +20,7 @@ class MediaType(enum.Enum):
     REPORTING = 'REPORTING'
     PICTURE = 'PICTURE'
     IMPORT = 'IMPORT'
+    CLAIMS = 'CLAIMS'
     OTHER = 'OTHER'
 
 

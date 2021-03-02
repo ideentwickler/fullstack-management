@@ -31,6 +31,7 @@ Babel = "^2.9.0"
 matplotlib = "^3.3.4"
 fastapi-pagination = {extras = ["sqlalchemy"], version = "^0.5.2"}
 aiofiles = "^0.6.0"
+fastapi-cache = "^0.1.0"
 
 [tool.poetry.dev-dependencies]
 mypy = "^0.770"

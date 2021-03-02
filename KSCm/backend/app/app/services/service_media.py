@@ -1,4 +1,6 @@
 import os
+from uuid import UUID
+
 import aiofiles
 import typing as t
 from app.schemas.media import MediaCreate
@@ -6,7 +8,7 @@ from app.utils.app_exceptions import AppException
 from app.utils.service_result import ServiceResult
 from app.services.main import AppService
 from app.core.config import settings
-
+from app.models.media import MediaType
 from app.utils.core import generate_fixed_filename, check_valid_filename
 from app import crud
 
@@ -24,6 +26,10 @@ class MediaService(AppService):
         if not check_valid_filename(filename=media_in.filename):
             return ServiceResult(
                 AppException.MediaCreate({"message": f"file extension not allowed"}))
+
+        if not getattr(MediaType, media_in.type, None):
+            return ServiceResult(
+                AppException.MediaCreate({"message": f"Unexpected Mediatype"}))
 
         exist_in_db = crud.media.get_by_kwargs(self.db,
                                                filename=media_in.filename).first()
@@ -49,17 +55,30 @@ class MediaService(AppService):
             return ServiceResult(AppException.MediaCreate())
         return ServiceResult(media)
 
-    def get_media(self, media_id: int) -> ServiceResult:
+    def get_media(self, media_id: UUID) -> ServiceResult:
         media = crud.media.get(self.db, id=media_id)
         if not media:
             return ServiceResult(AppException.MediaGet({"media_id": media_id}))
         return ServiceResult(media)
 
-    def start_celery_task(self, media_id: int) -> ServiceResult:
+    def start_celery_task(self, media_id: UUID) -> ServiceResult:
         media = crud.media.get(self.db, id=media_id)
+        if not media:
+            return ServiceResult(AppException.MediaGet({"media_id": media_id}))
+
         from app.core.celery_app import celery_app
         from app.api.api_v1.endpoints.utils import RUNNING_TASKS
-        task = celery_app.send_task("app.worker.progress_ticket_data")
+
+        if media.type == MediaType.IMPORT:
+            task = celery_app.\
+                send_task("app.worker.progress_ticket_data", args=[media.filepath])
+        elif media.type == MediaType.CLAIMS:
+            print("?")
+            task = celery_app.\
+                send_task("app.worker.progress_claim_data", args=[media.filepath])
+        else:
+            task = celery_app.send_task("app.worker.test_test")
+
         RUNNING_TASKS.append(task)
         result = {
             'task_id': task.id,

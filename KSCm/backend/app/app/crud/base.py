@@ -3,6 +3,7 @@ from typing import Any, Dict, Generic, List, Optional, Type, TypeVar, Union
 from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
+from sqlalchemy import func, distinct
 
 from app.db.base_class import Base
 
@@ -33,6 +34,25 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         self, db: Session, *, skip: int = 0, limit: int = 100
     ) -> List[ModelType]:
         return db.query(self.model).offset(skip).limit(limit).all()
+
+    def get_date_parts(
+            self, db: Session, *, column: str, part: str
+    ) -> Union[List[int], None]:
+        """
+        GET DATE PARTS
+        :param db: SQLAlchemy Session
+        :param column: String representing a Model-column (e.g. "created_at"
+        :param part: String representing the date parts: "YEAR" / "MONTH" / "DAY"
+        :return: A sorted list of integers
+        """
+        column_attr = getattr(self.model, column, None)
+        if not column_attr:
+            return None
+        parts = db.query(distinct(func.date_part(part, column_attr)))
+        if not parts:
+            return None
+        parts_sorted_list = sorted([int(part[0]) for part in parts])
+        return parts_sorted_list
 
     def get_by_kwargs(self, db: Session, **kwargs):
         if not kwargs:

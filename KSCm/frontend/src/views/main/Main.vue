@@ -28,7 +28,7 @@
               <v-list-tile-title>Tickets</v-list-tile-title>
             </v-list-tile-content>
           </v-list-tile>
-          <v-list-tile  class="tile">
+          <v-list-tile to="/main/claims" class="tile">
             <v-list-tile-action>
               <v-icon>request_quote</v-icon>
             </v-list-tile-action>

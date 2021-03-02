@@ -1,13 +1,48 @@
 import time
+
 from celery import current_task
 from datetime import datetime
+
 from app.db.session import SessionLocal
 from app.core.celery_app import celery_app
 from app.services.ticket import progress
 from app.services.controlling import ControllingCalendar
-from app import crud, models, schemas
+from app.services.claim.sys import iter_claim_rows, get_file
+from app import crud, models, schemas, services
 
 db = SessionLocal()
+
+
+@celery_app.task(acks_late=True)
+def progress_claim_data(filepath):
+
+    rows = iter_claim_rows(file=get_file(filepath))
+    for row in rows:
+        ticket_exist = crud.ticket.get_by_kwargs(
+            db, contract_nr=row.contract_nr, kind=models.TicketKind.COMMISSION).first()
+        if ticket_exist:
+            # UPDATE CLAIM DATA
+            # TODO: check it out!
+            row.store_internal_id = ticket_exist.store_internal_id
+            row.owner_id = ticket_exist.owner_id
+            row.ticket_id = ticket_exist.ticket_id
+
+            print("...ticket ->", ticket_exist.ticket_id)
+            claim_exist = crud.claim.get_by_kwargs(db, contract_nr=row.contract_nr,
+                                                   created_at=row.created_at,
+                                                   bill=row.bill).first()
+            if not claim_exist:
+                print("...claim not exist!")
+                claim = crud.claim.create(db, obj_in=row)
+                if claim:
+                    print(f"...created new claim {claim.id}")
+            else:
+                print("...claim exist!")
+                claim = crud.claim.update(db, db_obj=claim_exist, obj_in=row)
+                if claim:
+                    print(f"...updated claim {claim.id}")
+
+    return 'success'
 
 
 @celery_app.task(acks_late=True)
@@ -25,8 +60,45 @@ def test_test():
     return 'finished'
 
 
+public_static_data = {}
+
+
+@celery_app.task
+def progress_static_data():
+    print("started...")
+    static_data = {}
+    try:
+        years = crud.ticket.get_date_parts(db, column="created_at", part="YEAR")
+        years = [year for year in years if (year != 1999)]
+        supported_stores = crud.store.get_supported(db)
+        for year in years:
+            static_data[year] = {}
+            # STORE DATA PER YEAR
+            for store in supported_stores:
+                store_controlling_data = services.ControllingData(year=year, store_internal_id=store.internal_id, create_plot=False).get_context().dict()
+                static_data[year].update({
+                    store.name: store_controlling_data
+                })
+            # TOTAL DATA PER YEAR
+            year_controlling_data = services.ControllingData(year=year, create_plot=False).get_context().dict()
+            static_data[year].update({
+                'TOTAL': year_controlling_data,
+            })
+    except ValueError:
+        print("error...")
+    finally:
+        print("static data refreshed...")
+        public_static_data.update(static_data)
+    return 'finished'
+
+
+
+TEST_LIST = []
+
 @celery_app.task
 def checker():
+    x = 10
+    TEST_LIST.append(x)
     print("Hello 10 Seconds!")
 
 
@@ -80,9 +152,9 @@ def get_static_data(db):
 
 
 @celery_app.task(acks_late=True)
-def progress_ticket_data():
+def progress_ticket_data(filepath):
     i = 0
-    tickets = progress.read_ticket_file()
+    tickets = progress.read_ticket_file(file=filepath)
     tickets_len = len(tickets)
     for key, val in tickets.items():
         if val['kv_nr'] != 0 and val['ticket_id'] != 0:
@@ -119,3 +191,6 @@ def progress_ticket_data():
                     print(f"...updated ticket #{ticket.ticket_id}")
 
     return 'finished'
+
+
+

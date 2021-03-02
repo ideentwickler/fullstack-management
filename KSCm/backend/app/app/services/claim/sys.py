@@ -4,16 +4,15 @@ import typing as t
 from openpyxl import load_workbook
 from datetime import datetime
 
-from app.core.config import settings
 from app.db.session import SessionLocal
-
 from app import crud, models, schemas
+
 
 db = SessionLocal()
 
 
-def get_file(file="reklaliste.xlsx") -> load_workbook:
-    wb_file = load_workbook(str(settings.SERVER_BASE_DIR) + '/' + file)
+def get_file(file: str) -> load_workbook:
+    wb_file = load_workbook(file)
     i = 0
     for sheet in wb_file.sheetnames:
         i += 1

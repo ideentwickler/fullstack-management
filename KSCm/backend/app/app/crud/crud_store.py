@@ -1,6 +1,7 @@
 from typing import List
 
 from fastapi.encoders import jsonable_encoder
+from sqlalchemy import or_
 from sqlalchemy.orm import Session
 
 from app.crud.base import CRUDBase
@@ -17,6 +18,12 @@ class CRUDStore(CRUDBase[Store, StoreCreate, StoreUpdate]):
         db.commit()
         db.refresh(db_obj)
         return db_obj
+
+    def get_supported(self, db: Session) -> List[Store]:
+        query = db.query(self.model)\
+            .filter(or_(Store.support == StoreSupport.FULL,
+                        Store.support == StoreSupport.CLAIMS)).all()
+        return query
 
 
 store = CRUDStore(Store)

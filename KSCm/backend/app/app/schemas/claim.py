@@ -38,9 +38,6 @@ class ClaimUpdate(ClaimBase):
 # Properties shared by models stored in DB
 class ClaimInDBBase(ClaimBase):
     id: int
-    owner_id: int
-    store_internal_id: int
-    ticket_id: int
 
     class Config:
         orm_mode = True

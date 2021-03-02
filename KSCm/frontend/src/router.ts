@@ -88,6 +88,17 @@ export default new Router({
               ],
             },
             {
+              path: 'claims',
+              component: RouterComponent,
+              redirect: 'claims/all',
+              children: [
+                {
+                  path: 'all',
+                  component: () => import('./views/main/user/UserClaims.vue'),
+                },
+              ],
+            },
+            {
               path: 'profile',
               component: RouterComponent,
               redirect: 'profile/view',

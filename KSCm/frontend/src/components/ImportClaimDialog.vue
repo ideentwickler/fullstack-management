@@ -9,7 +9,7 @@
           color="second_ary"
           v-on="on"
         >
-          Import Tickets
+          Import Claims
         </v-btn>
       </template>
 
@@ -17,7 +17,7 @@
         <v-card-title
           class="headline second_ary"
         >
-          <h3>Import Tickets</h3>
+          <h3>Import Claims</h3>
         </v-card-title>
 
         <v-card-text>
@@ -39,7 +39,6 @@
                 @change="onFilePicked">
 
             <!-- Kind of logs -->
-            <p v-if="type !== 'text/csv' && type !== ''">Wrong File</p>
             <v-progress-linear v-if="this.taskStatus !== '' && this.taskStatus !== 'SUCCESS'" height="20px" color="primary"
                                      :indeterminate="true"></v-progress-linear>
             <v-progress-linear v-if="this.taskStatus == 'SUCCESS'" height="20px" color="primary"
@@ -179,7 +178,14 @@ export default class ImportTicketDialog extends Vue {
               this.statusMsg = 'Task successfully done! ';
               this.resetAndRefresh();
             }, 2500);
-
+          }
+          if (status === 'PENDING') {
+            clearInterval(retryTaskInterval);
+            setTimeout(() => {
+              this.taskStatus = 'PENDING';
+              this.statusMsg = 'Sorry something went wrong... ';
+              this.resetAndRefresh();
+            }, 2500);
           }
         });
       }, 2500);
@@ -201,10 +207,9 @@ export default class ImportTicketDialog extends Vue {
       const token = readToken(this.$store);
       const formData = new FormData();
       formData.append('file', fileObject);
-      formData.append('mediatype', 'IMPORT');
       this.statusMsg = 'Uploading file...';
 
-      api.postFileObject(token, formData, 'IMPORT')
+      api.postFileObject(token, formData, 'CLAIMS')
       .then((value) => {
         const mediaId = value.data.id;
 
@@ -227,11 +232,10 @@ export default class ImportTicketDialog extends Vue {
       this.lastModifiedDate = this.fileObject.lastModifiedDate;
       // VALIDATOR
       if (!this.fileObject) {
-        this.statusMsg = 'Please select a .csv file';
+        this.statusMsg = 'Please select a file';
         return;
       }
-
-      if (this.type !== 'text/csv') {
+      if (!this.type.includes('application/vnd.openxmlformats')) {
         this.statusMsg = 'Invalid file type...';
         return;
       }

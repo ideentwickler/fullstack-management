@@ -1,39 +1,47 @@
-from typing import Any, List
+import typing as t
 
-from fastapi import APIRouter, Depends, HTTPException
+from pydantic import BaseModel
+from fastapi import APIRouter, Depends
+from fastapi_pagination import Page, pagination_params
+from fastapi_pagination.ext.sqlalchemy import paginate
 from sqlalchemy.orm import Session
 
-from app import crud, models, schemas
+from app.utils.service_result import handle_result
+from app.services.service_claim import ClaimService
 from app.api import deps
+from app import schemas
+
 
 router = APIRouter()
 
 
-@router.get("/", response_model=List[schemas.Claim])
+class ReadClaimsGetParams(BaseModel):
+    desc: t.Optional[str] = None
+    order_by: t.Optional[str] = None
+
+
+@router.get("/", response_model=Page[schemas.Claim],
+            dependencies=[Depends(pagination_params)])
 def read_claims(
     db: Session = Depends(deps.get_db),
-    skip: int = 0,
-    limit: int = 999,
-    _current_user: models.User = Depends(deps.get_current_active_user),
-) -> Any:
+    request: ReadClaimsGetParams = Depends()
+) -> t.Any:
     """
     Retrieve claims.
     """
-    claims = crud.claim.get_multi(db, skip=skip, limit=limit)
-    return claims
+    service = ClaimService(db).get_paginate_query(request=request)
+    result = handle_result(service)
+    return paginate(result)
 
 
-@router.get("/{id}", response_model=schemas.Store)
+@router.get("/{id}", response_model=schemas.Claim)
 def read_claim(
     *,
     db: Session = Depends(deps.get_db),
     id: int,
-    _current_user: models.User = Depends(deps.get_current_active_user),
-) -> Any:
+) -> t.Any:
     """
     Get claim by ID.
     """
-    claim = crud.claim.get(db, id=id)
-    if not claim:
-        raise HTTPException(status_code=404, detail="Claim not found")
-    return claim
+    service = ClaimService(db).get(id=id)
+    return handle_result(service)

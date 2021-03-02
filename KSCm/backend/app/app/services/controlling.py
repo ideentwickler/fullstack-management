@@ -95,7 +95,8 @@ class FirstPageContext(BaseModel):
 class ControllingData(ControllingCalendar):
     def __init__(
             self, year: int = None, monthrange: t.List = None,
-            store_internal_id: int = None, owner_id: int = None
+            store_internal_id: int = None, owner_id: int = None,
+            create_plot: bool = True,
     ) -> None:
         super().__init__(year=year, monthrange=monthrange)
         self.months_labels = [month for month in self.data.keys() if (month != 'range')]
@@ -103,6 +104,7 @@ class ControllingData(ControllingCalendar):
         self.end = self.data['range']['end']
         self.store_internal_id = store_internal_id
         self.owner_id = owner_id
+        self.create_plot = create_plot
         self.context: FirstPageContext = FirstPageContext()
 
     def get_ticket_count_per_kind_and_month(self) -> None:
@@ -225,6 +227,8 @@ class ControllingData(ControllingCalendar):
         return
 
     def get_plot(self) -> None:
+        if not self.create_plot:
+            return
         plot = services.CreatePlot(
             labels=self.context.months,
             values={

@@ -71,13 +71,24 @@ export const api = {
       params: {page: pageNumber, size: itemsPerPage, order_by: orderBy, desc},
     });
   },
-  async postFileObject(token: string, data: any) {
-    return axios.post(`${apiUrl}/api/v1/media/`, data);
+  async postFileObject(token: string, data: any, mediaType: string) {
+    return axios.post(`${apiUrl}/api/v1/media/?media_type=${mediaType}`, data, authHeaders(token));
   },
   async createTask(token: string, mediaId: string) {
-    return axios.get(`${apiUrl}/api/v1/media/${mediaId}`, {params: {task: 'True'}});
+    return axios.get(`${apiUrl}/api/v1/media/${mediaId}`, { ...authHeaders(token), params: {task: 'True'}});
   },
   async getTaskStatus(token: string, taskId: string) {
-   return axios.get(`${apiUrl}/api/v1/utils/task-status/`, {params: {task_id: taskId}});
-}
+   return axios.get(`${apiUrl}/api/v1/utils/task-status/`, { ...authHeaders(token), params: {task_id: taskId}});
+  },
+  async getClaims(
+      token: string, pageNumber: number = 0, itemsPerPage: number = 15, orderBy: string, desc: boolean = true,
+  ) {
+    return axios.get(`${apiUrl}/api/v1/claims/`, {
+      ...authHeaders(token),
+      params: {page: pageNumber, size: itemsPerPage, order_by: orderBy, desc},
+    });
+  },
+  async getStaticData(token: string) {
+    return axios.get(`${apiUrl}/api/v1/controlling/static/`, authHeaders(token));
+  },
 };
